@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "thợ bảo dưỡng": "dich-vu/1.html",
         "thợ bảo hành": "chinh-sach-bao-hanh.html",
         "thợ sửa chữa": "dich-vu/7.html",
-        "trang chủ": "index.html",
+        "gợi ý hôm nay": "index.html",
         "dịch vụ": "dich-vu/lap-dat-dien-may.html",
         "thiết bị": "thiet-bi.html",
         "hoạt động": "hoat-dong.html",
@@ -34,13 +34,9 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     function getLocalPath(target) {
-        const pathParts = window.location.pathname.split('/');
-        const baseIdx = pathParts.findIndex(p => p === 'thodienmayxanh_mobile' || p === 'www.thodienmayxanh.com');
-        if (baseIdx !== -1) {
-            const basePath = pathParts.slice(0, baseIdx + 1).join('/');
-            return basePath + '/' + target;
-        }
-        return '/' + target;
+        const parts = window.location.pathname.split('/');
+        const isDichVu = parts.length > 1 && parts[parts.length - 2] === 'dich-vu';
+        return (isDichVu ? '../' : './') + target;
     }
 
     document.querySelectorAll("div, span, p").forEach(el => {
