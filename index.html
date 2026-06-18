@@ -1202,7 +1202,6 @@
       font-size: 13px;
       height: 28px;
     }
-    }
 
 
     /* Injected Mobile Tweaks (Global for Phone Emulator) */
@@ -1312,7 +1311,7 @@ Tiện ích</div></div>
         <div class="reminder-list">
           <div class="reminder-list-content" id="reminderListContent">
             <!-- Item 1: Washing machine -->
-            <div class="reminder-item">
+            <div class="reminder-item" style="cursor: pointer;">
               <div class="item-image">
                 <img src="ThoDMX_Weather_Card_Demo_Package/productimg/gree-gwc09pb-k3d0p4-550x160.jpg"
                   style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
@@ -1322,8 +1321,8 @@ Tiện ích</div></div>
                 <p class="item-meta">Có khuyến cáo vệ sinh vào ngày <span class="highlight">20/06/2026</span></p>
               </div>
               <div class="btn-group" style="grid-row: 2 / 3; grid-column: 2 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-  <button type="button" onclick="this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
-  <button class="ai-btn" type="button" onclick="window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
+  <button type="button" onclick="event.stopPropagation(); this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
+  <button class="ai-btn" type="button" onclick="event.stopPropagation(); window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
                 <div class="fancy-sparkle"
                   style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
                   <span style="
@@ -1359,7 +1358,7 @@ Tiện ích</div></div>
             </div>
 
             <!-- Item 2: Refrigerator -->
-            <div class="reminder-item">
+            <div class="reminder-item" style="cursor: pointer;">
               <div class="item-image">
                 <img src="ThoDMX_Weather_Card_Demo_Package/productimg/panasonic-nr-ba190ppvn-300x300.jpg"
                   style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
@@ -1369,8 +1368,8 @@ Tiện ích</div></div>
                 <p class="item-meta">Có khuyến cáo vệ sinh vào ngày <span class="highlight">22/06/2026</span></p>
               </div>
               <div class="btn-group" style="grid-row: 2 / 3; grid-column: 2 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-  <button type="button" onclick="this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
-  <button class="ai-btn" type="button" onclick="window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
+  <button type="button" onclick="event.stopPropagation(); this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
+  <button class="ai-btn" type="button" onclick="event.stopPropagation(); window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
                 <div class="fancy-sparkle"
                   style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
                   <span style="
@@ -1406,7 +1405,7 @@ Tiện ích</div></div>
             </div>
 
             <!-- Item 3: Water purifier -->
-            <div class="reminder-item">
+            <div class="reminder-item" style="cursor: pointer;">
               <div class="item-image">
                 <img src="ThoDMX_Weather_Card_Demo_Package/productimg/ro-karofi-b930-9-loi-130223-053337-600x600.jpg"
                   style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
@@ -1416,8 +1415,8 @@ Tiện ích</div></div>
                 <p class="item-meta">Có khuyến cáo vệ sinh vào ngày <span class="highlight">25/06/2026</span></p>
               </div>
               <div class="btn-group" style="grid-row: 2 / 3; grid-column: 2 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-  <button type="button" onclick="this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
-  <button class="ai-btn" type="button" onclick="window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
+  <button type="button" onclick="event.stopPropagation(); this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
+  <button class="ai-btn" type="button" onclick="event.stopPropagation(); window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
                 <div class="fancy-sparkle"
                   style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
                   <span style="
@@ -1453,7 +1452,7 @@ Tiện ích</div></div>
             </div>
 
             <!-- Item 4: Air Conditioner -->
-            <div class="reminder-item">
+            <div class="reminder-item" style="cursor: pointer;">
               <div class="item-image">
                 <img src="ThoDMX_Weather_Card_Demo_Package/productimg/80705-min-600x600.jpg"
                   style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
@@ -1463,8 +1462,8 @@ Tiện ích</div></div>
                 <p class="item-meta"><span class="highlight">Khuyến cáo bảo dưỡng</span></p>
               </div>
               <div class="btn-group" style="grid-row: 2 / 3; grid-column: 2 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-  <button type="button" onclick="this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
-  <button class="ai-btn" type="button" onclick="window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
+  <button type="button" onclick="event.stopPropagation(); this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
+  <button class="ai-btn" type="button" onclick="event.stopPropagation(); window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
                 <div class="fancy-sparkle"
                   style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
                   <span style="
@@ -1500,7 +1499,7 @@ Tiện ích</div></div>
             </div>
 
             <!-- Item 5: TV -->
-            <div class="reminder-item">
+            <div class="reminder-item" style="cursor: pointer;">
               <div class="item-image">
                 <img src="ThoDMX_Weather_Card_Demo_Package/productimg/80705-min-600x600.jpg"
                   style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
@@ -1510,8 +1509,8 @@ Tiện ích</div></div>
                 <p class="item-meta"><span class="highlight">Khuyến cáo bảo dưỡng</span></p>
               </div>
               <div class="btn-group" style="grid-row: 2 / 3; grid-column: 2 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-  <button type="button" onclick="this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
-  <button class="ai-btn" type="button" onclick="window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
+  <button type="button" onclick="event.stopPropagation(); this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
+  <button class="ai-btn" type="button" onclick="event.stopPropagation(); window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
                 <div class="fancy-sparkle"
                   style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
                   <span style="
@@ -1701,4 +1700,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.reminder-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        if (e.target.closest('.btn-group')) return;
+        window.location.href = 'chi-tiet-thiet-bi.html';
+      });
+    });
+  });
+</script>
 </html>
