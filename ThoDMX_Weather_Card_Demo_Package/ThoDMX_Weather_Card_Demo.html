@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <title>Thợ DMX — AI Weather Card Logic Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, 'SF Pro Text', 'Segoe UI', sans-serif;
+      background: #1e1e24;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 40px;
+    }
+
+    /* ─── CONTROL PANEL ────────────────────────────────────── */
+    .control-panel {
+      background: #2b2b36;
+      border-radius: 16px;
+      padding: 24px;
+      width: 320px;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: sticky;
+      top: 40px;
+    }
+
+    .control-panel h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+      color: #0d6ebd;
+    }
+
+    .ctrl-group {
+      margin-bottom: 20px;
+    }
+
+    .ctrl-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #aaa;
+    }
+
+    .ctrl-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #1a1a24;
+      border: 1px solid #444;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .ctrl-group select:focus {
+      border-color: #0d6ebd;
+    }
+
+    .status-log {
+      background: #1a1a24;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #4ade80;
+      min-height: 60px;
+    }
+
+    /* ─── PHONE SHELL ───────────────────────────────── */
+    .phone {
+      width: 390px;
+      min-height: 844px;
+      border-radius: 46px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: #f0f2f5;
+      box-shadow: 0 50px 100px rgba(0, 0, 0, .85), 0 0 0 2px #252540, 0 0 0 12px #111;
+      flex-shrink: 0;
+    }
+
+    .phone::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 32px;
+      background: #000;
+      border-radius: 0 0 16px 16px;
+      z-index: 50;
+    }
+
+    /* ─── HEADER ────────────────────────────────── */
+    .sbar {
+      background: #1578d4;
+      padding: 14px 24px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .hdr {
+      background: linear-gradient(170deg, #1a7fd4 0%, #0d5fa8 55%, #0a4d90 100%);
+      padding: 8px 16px 16px;
+    }
+
+    .hdr-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-badge {
+      width: 38px;
+      height: 38px;
+      background: #ffd600;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+      color: #0d5fa8;
+    }
+
+    .logo-name {
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    /* ─── SCROLL AREA ───────────────────────────────── */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      background: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .scroll-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* ─── WEATHER CARD ─────────────────────────────────────── */
+    .wx-card-container {
+      display: none;
+      transition: all 0.3s ease;
+    }
+
+    .wx-card {
+      position: relative;
+      width: 100%;
+      min-height: 180px;
+      height: auto;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-family: 'Inter', -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif;
+      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .wx-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    /* PURE CSS BACKGROUNDS (REPLACING APPLE ASSETS) */
+    .bg-hot {
+      background: linear-gradient(145deg, #0d6ebd 0%, #3094d1 50%, #68b8e8 100%);
+    }
+
+    .bg-rain {
+      background: linear-gradient(150deg, #2b3a4a 0%, #4b5d6d 100%);
+    }
+
+    .bg-alert {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+
+    /* CSS SUN & RAYS */
+    .css-sun {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      width: 80px;
+      height: 80px;
+      background: #ffde00;
+      border-radius: 50%;
+      box-shadow: 0 0 30px #ff9d00, 0 0 60px rgba(255, 157, 0, 0.6), 0 0 100px rgba(255, 200, 0, 0.4);
+      animation: pulse-sun 4s infinite alternate;
+    }
+
+    .css-rays {
+      position: absolute;
+      right: -60px;
+      top: -60px;
+      width: 240px;
+      height: 240px;
+      background: repeating-conic-gradient(from 0deg, transparent 0deg 15deg, rgba(255, 255, 255, 0.15) 15deg 30deg);
+      border-radius: 50%;
+      -webkit-mask-image: radial-gradient(circle, black 20%, transparent 65%);
+      animation: spin-rays 40s linear infinite;
+    }
+
+    /* CSS CLOUDS */
+    .css-cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 100px;
+      width: 120px;
+      height: 35px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .css-cloud::before {
+      content: '';
+      position: absolute;
+      background: inherit;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      top: -25px;
+      left: 15px;
+    }
+
+    .css-cloud::after {
+      content: '';
+      position: absolute;
+      background: inherit;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      top: -35px;
+      right: 15px;
+    }
+
+    .css-cloud.dark {
+      background: rgba(130, 140, 150, 0.95);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .cloud-1 {
+      right: -10px;
+      top: 15px;
+      animation: float-cloud 8s ease-in-out infinite;
+      transform: scale(1.1);
+    }
+
+    .cloud-2 {
+      right: 70px;
+      top: 60px;
+      animation: float-cloud 12s ease-in-out infinite -4s;
+      transform: scale(0.8);
+      opacity: 0.8;
+    }
+
+
+
+    /* ─── NEW UI LAYOUT ───────────────────────────────── */
+    .wx-content {
+      position: relative;
+      z-index: 10;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      color: white;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .wx-layout-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .wx-temp-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .wx-icon {
+      font-size: 36px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+    }
+
+    .wx-temp {
+      font-size: 38px;
+      font-weight: 700;
+      line-height: 1;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+      letter-spacing: -1px;
+      margin-top: 0;
+    }
+
+    .wx-loc-group {
+      text-align: right;
+    }
+
+    .wx-city {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, .3);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      color: #fff;
+    }
+
+    .wx-subtitle {
+      font-size: 12px;
+      opacity: 0.8;
+      font-weight: 500;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+      margin-top: 0;
+    }
+
+    .wx-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.25);
+      margin-bottom: 14px;
+      width: 100%;
+      border: none;
+    }
+
+    .wx-layout-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex: 1;
+      padding-bottom: 4px;
+    }
+
+    .wx-text-group {
+      flex: 1;
+      padding-right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .wx-desc {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.45;
+      margin-bottom: 16px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+      color: #f0f0f0;
+    }
+
+    .wx-desc strong {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .wx-cta {
+      font-size: 14px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 8px 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .wx-cta:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+      box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.25),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Animations */
+    /* AI Sparkle Button Animations */
+    .ai-star-mask {
+      -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+      -webkit-mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+    }
+
+    @keyframes ai-sparkle-pulse {
+
+      0%,
+      100% {
+        transform: rotate(-8deg) scale(0.95);
+      }
+
+      50% {
+        transform: rotate(8deg) scale(1.05);
+        filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
+      }
+    }
+
+    @keyframes ai-sparkle-spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes ai-sparkle-pop-1 {
+
+      0%,
+      100% {
+        transform: translate(-8px, -8px) scale(0) rotate(0deg);
+        opacity: 0;
+      }
+
+      50% {
+        transform: translate(-10px, -14px) scale(1) rotate(45deg);
+        opacity: 0.9;
+      }
+    }
+
+    @keyframes ai-sparkle-pop-2 {
+
+      0%,
+      100% {
+        transform: translate(12px, -4px) scale(0) rotate(0deg);
+        opacity: 0;
+      }
+
+      50% {
+        transform: translate(18px, -8px) scale(1) rotate(-30deg);
+        opacity: 0.9;
+      }
+    }
+
+    @keyframes ai-sparkle-pop-3 {
+
+      0%,
+      100% {
+        transform: translate(-2px, 12px) scale(0) rotate(0deg);
+        opacity: 0;
+      }
+
+      50% {
+        transform: translate(-5px, 18px) scale(1) rotate(60deg);
+        opacity: 0.9;
+      }
+    }
+
+    @keyframes pulse-sun {
+      0% {
+        transform: scale(1);
+        opacity: 0.9;
+      }
+
+      100% {
+        transform: scale(1.05);
+        opacity: 1;
+        box-shadow: 0 0 50px #ff9d00, 0 0 80px rgba(255, 157, 0, 0.8), 0 0 120px rgba(255, 200, 0, 0.5);
+      }
+    }
+
+    @keyframes spin-rays {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes float-cloud {
+
+      0%,
+      100% {
+        margin-top: 0;
+      }
+
+      50% {
+        margin-top: -8px;
+      }
+    }
+
+    @keyframes rain-drop {
+      0% {
+        background-position: 0 0;
+      }
+
+      100% {
+        background-position: 15px 300px;
+      }
+    }
+
+    /* Apple Weather Keyframes */
+    @keyframes sunFloat {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1)
+      }
+
+      50% {
+        transform: translateY(-9px) scale(1.04)
+      }
+    }
+
+    @keyframes sunGlow {
+
+      0%,
+      100% {
+        opacity: .85;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .95;
+        transform: scale(1.07)
+      }
+    }
+
+    @keyframes flarePop {
+
+      0%,
+      100% {
+        opacity: .3;
+        transform: scale(.95)
+      }
+
+      50% {
+        opacity: .55;
+        transform: scale(1.12)
+      }
+    }
+
+    @keyframes rayRotate {
+      from {
+        transform: rotate(0deg);
+        opacity: .18
+      }
+
+      to {
+        transform: rotate(360deg);
+        opacity: .22
+      }
+    }
+
+    /* Device Lists */
+    .dev-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dev-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .d-ico {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: #f0f4f8;
+    }
+
+    .d-info {
+      flex: 1;
+    }
+
+    .d-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .d-sub {
+      font-size: 12px;
+      color: #777;
+      margin-top: 2px;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .b-red {
+      background: #ffeceb;
+      color: #d63031;
+    }
+
+    .b-orange {
+      background: #fff3e0;
+      color: #e67e22;
+    }
+
+    .b-gray {
+      background: #f5f5f5;
+      color: #999;
+    }
+
+    /* Empty state */
+    .empty-state {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-ico {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .empty-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 6px;
+    }
+
+    .empty-desc {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 16px;
+    }
+
+    .btn-primary {
+      background: #0d6ebd;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Fake Content block */
+    .dummy-content {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .dummy-line {
+      height: 12px;
+      background: #eee;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .dummy-line.short {
+      width: 60%;
+    }
+
+    /* INJECTED REMINDER CARD CSS */
+    .reminder-card {
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 520px;
+      z-index: 10;
+      border-radius: 24px;
+      padding: 22px 22px 18px;
+      overflow: hidden;
+      background:
+        radial-gradient(120% 80% at 10% 0%, #cfe6ff 0%, transparent 60%),
+        radial-gradient(120% 80% at 100% 10%, #d9d0ff 0%, transparent 55%),
+        linear-gradient(135deg, #e6f1ff 0%, #f1ebff 100%);
+      box-shadow:
+        0 10px 30px rgba(99, 130, 255, 0.18),
+        0 2px 6px rgba(99, 130, 255, 0.08);
+    }
+
+    .reminder-card::before,
+    .reminder-card::after {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow:
+        0 0 8px rgba(255, 255, 255, 0.9),
+        30px -10px 0 -2px rgba(255, 255, 255, 0.85),
+        60px 8px 0 -3px rgba(255, 255, 255, 0.7),
+        -20px 20px 0 -2px rgba(255, 255, 255, 0.7);
+      pointer-events: none;
+    }
+
+    .reminder-card::before {
+      top: 55%;
+      left: 12px;
+      right: auto;
+      opacity: 0.6;
+    }
+
+    .reminder-card::after {
+      top: 72%;
+      left: 36%;
+      right: auto;
+      opacity: 0.5;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      /* right padding reserves space for the 76px robot wrap */
+      padding: 6px 84px 18px 4px;
+      position: relative;
+    }
+
+    .header-icon {
+      position: relative;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      isolation: isolate;
+      animation: iconBob 2.4s ease-in-out infinite;
+    }
+
+    .header-icon::before {
+      content: "";
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg,
+          #6aa9ff, #8ec5ff, #b39bff,
+          #ff8fd1, #7ad7ff, #6aa9ff);
+      animation: rotateRing 3s linear infinite;
+      filter: blur(2px);
+      z-index: -2;
+    }
+
+    .header-icon::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6aa9ff, #8c7bff);
+      box-shadow:
+        0 4px 14px rgba(106, 169, 255, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      z-index: -1;
+    }
+
+    .header-icon svg {
+      width: 22px;
+      height: 22px;
+      animation: iconPulse 2s ease-in-out infinite;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+    }
+
+    .08);
+    }
+    }
+
+    .header-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0;
+      background: linear-gradient(90deg, #2b6cff 0%, #8c5bff 50%, #2b6cff 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: titleShimmer 4s linear infinite;
+    }
+
+    .header-robot-wrap {
+      position: absolute;
+      top: -10px;
+      right: -30px;
+      width: 140px;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: robotFloat 3.4s ease-in-out infinite;
+    }
+
+    .header-robot-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 2px border-radius: 50%;
+      background: radial-gradient(circle,
+          rgba(0, 229, 255, 0.3) 0%,
+          rgba(140, 99, 255, 0.2) 45%,
+          transparent 70%);
+      animation: haloPulse 2.8s ease-in-out infinite;
+      filter: blur(7px);
+      z-index: 0;
+    }
+
+    .header-robot-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle 2.5px at 50% 0%, #00e5ff 0%, transparent 100%),
+        radial-gradient(circle 2px at 100% 50%, #b39bff 0%, transparent 100%),
+        radial-gradient(circle 2.5px at 50% 100%, #7ad7ff 0%, transparent 100%),
+        radial-gradient(circle 2px at 0% 50%, #ffffff 0%, transparent 100%);
+      animation: rotateRing 5s linear infinite reverse;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .header-robot {
+      position: relative;
+      width: 66px;
+      height: 80px;
+      object-fit: contain;
+      z-index: 1;
+      filter:
+        drop-shadow(0 3px 12px rgba(0, 180, 255, 0.5)) drop-shadow(0 6px 20px rgba(140, 99, 255, 0.32));
+    }
+
+    .border-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 2px;
+      background: conic-gradient(from var(--angle, 0deg),
+          transparent 0deg, transparent 260deg,
+          rgba(91, 63, 184, 0.4) 280deg,
+          rgba(140, 80, 230, 0.7) 300deg,
+          rgba(196, 109, 255, 0.9) 320deg,
+          rgba(232, 181, 255, 0.98) 338deg,
+          rgba(255, 208, 232, 1) 350deg,
+          rgba(255, 240, 250, 1) 357deg,
+          transparent 360deg);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: borderSweep 4s linear infinite;
+      pointer-events: none;
+      z-index: 3;
+      filter:
+        drop-shadow(0 0 4px rgba(255, 220, 245, 0.95)) drop-shadow(0 0 10px rgba(196, 109, 255, 0.85)) drop-shadow(0 0 20px rgba(91, 63, 184, 0.65));
+    }
+
+    .reminder-list {
+      position: relative;
+      z-index: 10;
+      background: rgba(255, 255, 255, 1);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 18px;
+      padding: 6px 0;
+      box-shadow: 0 4px 14px rgba(99, 130, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .reminder-list-content {
+      max-height: 178px;
+      overflow-y: auto;
+      padding: 0 14px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .reminder-list-content::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.95) 80%);
+      pointer-events: none;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 6px;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .scroll-cue.hidden {
+      opacity: 0;
+    }
+
+    .scroll-cue svg {
+      width: 18px;
+      height: 18px;
+      fill: #8c5bff;
+      animation: cueBounce 1.5s infinite;
+    }
+
+    .reminder-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 6px;
+      border-bottom: 1px solid rgba(180, 200, 230, 0.45);
+    }
+
+    .reminder-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-image {
+      width: 56px;
+      height: 70px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      /* box-shadow removed */
+    }
+
+    .item-image svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a2940;
+      margin: 0 0 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-meta {
+      font-size: 14px;
+      color: #4a5b78;
+      margin: 0;
+    }
+
+    .item-meta .highlight {
+      color: #ff3838;
+      font-weight: 600;
+    }
+
+    .ai-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 22px;
+      border: none;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      overflow: hidden;
+      isolation: isolate;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: 0 6px 18px rgba(99, 130, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      background: linear-gradient(120deg, #6aa9ff 0%, #8ec5ff 25%, #b39bff 55%, #7aa8ff 80%, #6aa9ff 100%);
+      background-size: 250% 100%;
+      animation: gradientFlow 4s linear infinite;
+      transition: transform .25s ease, box-shadow .25s ease;
+      font-family: inherit;
+    }
+
+    .ai-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .ai-btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -60%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.55) 50%, transparent 100%);
+      transform: skewX(-20deg);
+      animation: shine 3.2s ease-in-out infinite;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .ai-btn:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 10px 24px rgba(99, 130, 255, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .ai-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    .ai-btn .label,
+    .ai-btn .sparkle {
+      position: relative;
+      z-index: 3;
+    }
+
+    .ai-btn .sparkle {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      animation: twinkle 1.8s ease-in-out infinite;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+    }
+
+    .reminder-card {
+      padding: 18px 14px 14px;
+      border-radius: 20px;
+    }
+
+    .card-header {
+      padding-right: 68px;
+    }
+
+    .header-title {
+      font-size: 15px;
+    }
+
+    .header-icon {
+      width: 32px;
+      height: 32px;
+    }
+
+    .header-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+
+
+    .item-image {
+      width: 46px;
+      height: 58px;
+    }
+
+    .item-title {
+      font-size: 14px;
+    }
+
+    .item-meta {
+      font-size: 12px;
+    }
+
+    .ai-btn {
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+
+    .scroll-cue-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 80px;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 90%);
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+
+    .scroll-cue-right.hidden {
+      opacity: 0;
+    }
+
+    .reminder-card {
+      position: relative !important;
+      right: auto !important;
+      top: auto !important;
+      margin-top: 20px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    /* INJECTED PROPERTIES AND KEYFRAMES */
+    @property --angle {
+      syntax: "<angle>";
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    @keyframes rotateRing {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes iconBob {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-3px);
+      }
+    }
+
+    @keyframes iconPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.08);
+      }
+    }
+
+    @keyframes titleShimmer {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 200% 50%;
+      }
+    }
+
+    @keyframes robotFloat {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-1.5deg);
+      }
+
+      50% {
+        transform: translateY(-5px) rotate(1.5deg);
+      }
+    }
+
+    @keyframes haloPulse {
+
+      0%,
+      100% {
+        opacity: 0.7;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.18);
+      }
+    }
+
+    @keyframes borderSweep {
+      from {
+        --angle: 0deg;
+      }
+
+      to {
+        --angle: 360deg;
+      }
+    }
+
+    @keyframes breathe {
+      0% {
+        transform: scaleY(1) scaleX(1);
+      }
+
+      50% {
+        transform: scaleY(1.02) scaleX(0.99);
+      }
+
+      100% {
+        transform: scaleY(1) scaleX(1);
+      }
+    }
+
+    @keyframes cueBounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(5px);
+      }
+    }
+
+    @keyframes gradientFlow {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 250% 50%;
+      }
+    }
+
+    @keyframes shine {
+      0% {
+        left: -60%;
+      }
+
+      60% {
+        left: 120%;
+      }
+
+      100% {
+        left: 120%;
+      }
+    }
+
+    @keyframes twinkle {
+
+      0%,
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.25) rotate(15deg);
+        opacity: 0.85;
+      }
+    }
+
+    @keyframes rippleAnim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes robotFloat {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-2deg);
+      }
+
+      50% {
+        transform: translateY(-3px) rotate(2deg);
+      }
+    }
+
+    @keyframes sunPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 12px rgba(255, 167, 50, 0.6);
+        transform: scale(1);
+      }
+
+      50% {
+        box-shadow: 0 0 20px rgba(255, 167, 50, 0.9);
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes sunRotate {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .reminder-item {
+      display: grid !important;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      gap: 6px 12px;
+      align-items: center;
+    }
+
+    .item-image {
+      grid-row: 1 / 3;
+    }
+
+    .item-content {
+      grid-row: 1 / 2;
+      grid-column: 2 / 3;
+    }
+
+    .ai-btn {
+      grid-row: 2 / 3;
+      grid-column: 2 / 3;
+      justify-self: end;
+      margin-top: 4px;
+      padding: 4px 12px;
+      font-size: 13px;
+      height: 28px;
+    }
+    }
+
+
+    /* Injected Mobile Tweaks (Global for Phone Emulator) */
+    .reminder-list-content {
+      max-height: 178px !important;
+    }
+
+    .reminder-item {
+      display: grid !important;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      gap: 2px 12px !important;
+      align-items: center;
+      padding: 12px 6px !important;
+    }
+
+    .item-image {
+      grid-row: 1 / 3;
+      width: 46px !important;
+      height: 58px !important;
+    }
+
+    .item-content {
+      grid-row: 1 / 2;
+      grid-column: 2 / 3;
+    }
+
+    .ai-btn {
+      grid-row: 2 / 3;
+      grid-column: 2 / 3;
+      justify-self: end;
+      margin-top: 4px;
+      padding: 4px 12px;
+      font-size: 13px;
+      height: 28px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- CONTROL PANEL -->
+  <div class="control-panel">
+    <h2>Control Panel</h2>
+
+    <div class="ctrl-group">
+      <label>🌡 Thời tiết (Weather)</label>
+      <select id="selWeather">
+        <option value="HOT">Nắng nóng (39°C)</option>
+        <option value="RAINY">Mưa ẩm (Độ ẩm 90%)</option>
+      </select>
+    </div>
+
+    <div class="ctrl-group">
+      <label>📱 Thiết bị (Device Status)</label>
+      <select id="selDevice">
+        <option value="NORMAL">Bình thường (Chưa đến hạn)</option>
+        <option value="NO_DEVICE">Chưa có thiết bị nào</option>
+        <option value="MISSING_DATA">Thiếu thông tin (Data lỗi)</option>
+      </select>
+    </div>
+
+    <div class="ctrl-group">
+      <label>Logs Logic Output:</label>
+      <div id="logOutput" class="status-log">Ready...</div>
+    </div>
+  </div>
+
+  <!-- PHONE EMULATOR -->
+  <div class="phone">
+    <div class="sbar">
+      <span>9:41</span>
+      <span>📶 🔋</span>
+    </div>
+    <div class="hdr">
+      <div class="hdr-row">
+        <div class="logo">
+          <div class="logo-badge">🔧</div>
+          <div class="logo-name">Thợ DMX</div>
+        </div>
+        <div style="color:#fff;font-size:20px">🔔</div>
+      </div>
+    </div>
+
+    <div class="scroll-area">
+
+      <!-- REMINDER CARD -->
+      <div class="reminder-card"
+        style="position:relative; right:auto; top:auto; transform:none; width:100%; max-width:340px; margin: 0 auto 16px auto; box-sizing: border-box; padding: 16px;">
+        <span class="border-glow" aria-hidden="true"></span>
+
+        <!-- Header -->
+        <div class="card-header">
+          <span class="header-icon" aria-hidden="true">
+            <div class="fancy-sparkle"
+              style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
+              <span style="
+        display: block; width: 100%; height: 100%; position: relative;
+        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+      ">
+                <span class="ai-star-mask" style="
+          position: absolute; inset: 0; overflow: hidden;
+        ">
+                  <span style="
+            position: absolute; left: -50%; top: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, #ff5a36 0deg, #e0f2fe 90deg, #007aff 180deg, #ffd700 270deg, #ff5a36 360deg);
+            animation: ai-sparkle-spin 3s linear infinite;
+          "></span>
+                </span>
+                <span style="
+          position: absolute; inset: 0;
+          background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 50%);
+          mix-blend-mode: screen;
+        "></span>
+              </span>
+            </div>
+          </span>
+          <h2 class="header-title">Thợ DMX nhắc bạn hôm nay</h2>
+
+          <!-- ============================================================
+                 AI MASCOT — "DMX Bot"
+                 Premium redesign: distinctive helmet shape, layered glowing
+                 cyan eyes, circuit-board details, pulsing energy core &
+                 blinking ear LEDs. Fully animated, matches blue/purple theme.
+            ============================================================ -->
+          <div class="header-robot-wrap" aria-hidden="true">
+            <img src="thoDMX2-RGB-nobg.png" alt="Mascot Thợ ĐMX"
+              class="header-robot mascot-static mascot-img">
+          </div>
+        </div>
+
+        <!-- List -->
+        <div class="reminder-list">
+          <div class="reminder-list-content" id="reminderListContent">
+            <!-- Item 1: Washing machine -->
+            <div class="reminder-item">
+              <div class="item-image">
+                <img src="productimg/gree-gwc09pb-k3d0p4-550x160.jpg"
+                  style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
+              </div>
+              <div class="item-content">
+                <p class="item-title">Máy lạnh Gree GWC09PB-K3D0P4</p>
+                <p class="item-meta">Có khuyến cáo vệ sinh vào ngày <span class="highlight">20/06/2026</span></p>
+              </div>
+              <button class="ai-btn" type="button">
+                <div class="fancy-sparkle"
+                  style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
+                  <span style="
+        display: block; width: 100%; height: 100%; position: relative;
+        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+      ">
+                    <span class="ai-star-mask" style="
+          position: absolute; inset: 0; overflow: hidden;
+        ">
+                      <span style="
+            position: absolute; left: -50%; top: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, #ff5a36 0deg, #e0f2fe 90deg, #007aff 180deg, #ffd700 270deg, #ff5a36 360deg);
+            animation: ai-sparkle-spin 3s linear infinite;
+          "></span>
+                    </span>
+                    <span style="
+          position: absolute; inset: 0;
+          background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 50%);
+          mix-blend-mode: screen;
+        "></span>
+                  </span>
+                </div>
+                <span class="label">Đặt lịch</span>
+              </button>
+            </div>
+
+            <!-- Item 2: Refrigerator -->
+            <div class="reminder-item">
+              <div class="item-image">
+                <img src="productimg/panasonic-nr-ba190ppvn-300x300.jpg"
+                  style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
+              </div>
+              <div class="item-content">
+                <p class="item-title">Tủ lạnh Samsung Inverter 280 lít</p>
+                <p class="item-meta">Có khuyến cáo vệ sinh vào ngày <span class="highlight">22/06/2026</span></p>
+              </div>
+              <button class="ai-btn" type="button">
+                <div class="fancy-sparkle"
+                  style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
+                  <span style="
+        display: block; width: 100%; height: 100%; position: relative;
+        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+      ">
+                    <span class="ai-star-mask" style="
+          position: absolute; inset: 0; overflow: hidden;
+        ">
+                      <span style="
+            position: absolute; left: -50%; top: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, #ff5a36 0deg, #e0f2fe 90deg, #007aff 180deg, #ffd700 270deg, #ff5a36 360deg);
+            animation: ai-sparkle-spin 3s linear infinite;
+          "></span>
+                    </span>
+                    <span style="
+          position: absolute; inset: 0;
+          background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 50%);
+          mix-blend-mode: screen;
+        "></span>
+                  </span>
+                </div>
+                <span class="label">Đặt lịch</span>
+              </button>
+            </div>
+
+            <!-- Item 3: Water purifier -->
+            <div class="reminder-item">
+              <div class="item-image">
+                <img src="productimg/ro-karofi-b930-9-loi-130223-053337-600x600.jpg"
+                  style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
+              </div>
+              <div class="item-content">
+                <p class="item-title">Máy lọc nước RO nóng nguội Karofi</p>
+                <p class="item-meta">Có khuyến cáo vệ sinh vào ngày <span class="highlight">25/06/2026</span></p>
+              </div>
+              <button class="ai-btn" type="button">
+                <div class="fancy-sparkle"
+                  style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
+                  <span style="
+        display: block; width: 100%; height: 100%; position: relative;
+        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+      ">
+                    <span class="ai-star-mask" style="
+          position: absolute; inset: 0; overflow: hidden;
+        ">
+                      <span style="
+            position: absolute; left: -50%; top: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, #ff5a36 0deg, #e0f2fe 90deg, #007aff 180deg, #ffd700 270deg, #ff5a36 360deg);
+            animation: ai-sparkle-spin 3s linear infinite;
+          "></span>
+                    </span>
+                    <span style="
+          position: absolute; inset: 0;
+          background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 50%);
+          mix-blend-mode: screen;
+        "></span>
+                  </span>
+                </div>
+                <span class="label">Đặt lịch</span>
+              </button>
+            </div>
+
+            <!-- Item 4: Air Conditioner -->
+            <div class="reminder-item">
+              <div class="item-image">
+                <img src="productimg/80705-min-600x600.jpg"
+                  style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
+              </div>
+              <div class="item-content">
+                <p class="item-title">Máy lạnh treo tường (Chưa rõ model)</p>
+                <p class="item-meta"><span class="highlight">Khuyến cáo bảo dưỡng</span></p>
+              </div>
+              <button class="ai-btn" type="button">
+                <div class="fancy-sparkle"
+                  style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
+                  <span style="
+        display: block; width: 100%; height: 100%; position: relative;
+        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+      ">
+                    <span class="ai-star-mask" style="
+          position: absolute; inset: 0; overflow: hidden;
+        ">
+                      <span style="
+            position: absolute; left: -50%; top: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, #ff5a36 0deg, #e0f2fe 90deg, #007aff 180deg, #ffd700 270deg, #ff5a36 360deg);
+            animation: ai-sparkle-spin 3s linear infinite;
+          "></span>
+                    </span>
+                    <span style="
+          position: absolute; inset: 0;
+          background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 50%);
+          mix-blend-mode: screen;
+        "></span>
+                  </span>
+                </div>
+                <span class="label">Đặt lịch</span>
+              </button>
+            </div>
+
+            <!-- Item 5: TV -->
+            <div class="reminder-item">
+              <div class="item-image">
+                <img src="productimg/80705-min-600x600.jpg"
+                  style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
+              </div>
+              <div class="item-content">
+                <p class="item-title">Tivi thông minh (Chưa rõ model)</p>
+                <p class="item-meta"><span class="highlight">Khuyến cáo bảo dưỡng</span></p>
+              </div>
+              <button class="ai-btn" type="button">
+                <div class="fancy-sparkle"
+                  style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
+                  <span style="
+        display: block; width: 100%; height: 100%; position: relative;
+        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-image: url('data:image/svg+xml;utf8,<svg viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z%22/></svg>');
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+      ">
+                    <span class="ai-star-mask" style="
+          position: absolute; inset: 0; overflow: hidden;
+        ">
+                      <span style="
+            position: absolute; left: -50%; top: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, #ff5a36 0deg, #e0f2fe 90deg, #007aff 180deg, #ffd700 270deg, #ff5a36 360deg);
+            animation: ai-sparkle-spin 3s linear infinite;
+          "></span>
+                    </span>
+                    <span style="
+          position: absolute; inset: 0;
+          background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 50%);
+          mix-blend-mode: screen;
+        "></span>
+                  </span>
+                </div>
+                <span class="label">Đặt lịch</span>
+              </button>
+            </div>
+
+          </div>
+          <!-- Scroll Cue Indicator -->
+          <div class="scroll-cue" id="scrollCue">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- DYNAMIC WEATHER CARD -->
+      <div id="wxContainer" class="wx-card-container">
+        <div class="wx-card" id="wxCard">
+          <!-- CSS Backgrounds injected here -->
+          <div id="wxBg" class="wx-bg"></div>
+
+          <div class="wx-content">
+            <div class="wx-layout-top">
+              <div class="wx-temp-group">
+                <span id="wxTemp" class="wx-temp">39°C</span>
+              </div>
+              <div class="wx-loc-group">
+                <div class="wx-city">📍 Thủ Đức, TP.Hồ Chí Minh</div>
+                <div id="wxSub" class="wx-subtitle">Cập nhật lúc 10:30 hôm nay</div>
+              </div>
+            </div>
+
+            <!-- <div class="wx-divider"></div> -->
+
+            <div class="wx-layout-bottom">
+              <div class="wx-text-group">
+                <div id="wxDesc" class="wx-desc">
+                  Phát hiện thời tiết nóng tại khu vực của bạn, phù hợp vệ sinh máy lạnh để <strong>làm lạnh tốt
+                    hơn</strong> và <strong>tiết kiệm điện hơn</strong>!
+                </div>
+                <button id="wxBtn" class="wx-cta">Xem gợi ý từ Thợ DMX</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DYNAMIC DEVICE LIST -->
+      <div id="devContainer" class="dev-list"></div>
+
+      <!-- DUMMY CONTENT -->
+      <div class="dummy-content">
+        <div style="font-weight:700;margin-bottom:12px;color:#333;">Dịch vụ nổi bật</div>
+        <div class="dummy-line"></div>
+        <div class="dummy-line"></div>
+        <div class="dummy-line short"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+
+    // Logic Elements
+    const selWeather = document.getElementById('selWeather');
+    const selDevice = document.getElementById('selDevice');
+    const logOutput = document.getElementById('logOutput');
+
+    // UI Elements
+    const wxContainer = document.getElementById('wxContainer');
+    const wxCard = document.getElementById('wxCard');
+    const wxBg = document.getElementById('wxBg');
+    const wxTemp = document.getElementById('wxTemp');
+    const wxSub = document.getElementById('wxSub');
+    const wxDesc = document.getElementById('wxDesc');
+    const wxBtn = document.getElementById('wxBtn');
+    const devContainer = document.getElementById('devContainer');
+
+    const bgAssets = {
+      HOT: {
+        cls: 'bg-hot',
+        html: `
+      <img src="03_minimalist_unsplash_zjoydJb17mE.webp" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;" />
+      <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.25) 100%); z-index: 1;"></div>
+      
+      <!-- Apple Sun Effect (Centered to match background image) -->
+      <div class="apple-sun-container" style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); width:140px; height:140px; z-index:2; pointer-events:none;">
+          <!-- Sun rays -->
+          <div style="
+            position: absolute;
+            width:340px;height:340px;
+            top:-100px;left:-100px;
+            opacity:.18;
+            animation:rayRotate 30s linear infinite;
+            background: 
+              repeating-conic-gradient(from 0deg, rgba(255,255,255,0) 0deg, rgba(255,255,255,0.5) 10deg, rgba(255,255,255,0) 20deg),
+              repeating-conic-gradient(from 15deg, rgba(255,255,255,0) 0deg, rgba(255,255,255,0.3) 14deg, rgba(255,255,255,0) 28deg),
+              repeating-conic-gradient(from 5deg, rgba(255,255,255,0) 0deg, rgba(255,255,255,0.2) 6deg, rgba(255,255,255,0) 12deg);
+            mix-blend-mode: screen;
+            -webkit-mask-image: radial-gradient(circle, transparent 20%, black 40%, transparent 70%);
+            mask-image: radial-gradient(circle, transparent 20%, black 40%, transparent 70%);
+          "></div>
+          <!-- Main sun (REMOVED: The background image already has a natural sun) -->
+          <!-- Secondary sun (screen blend) -->
+          <div style="
+            position: absolute;
+            width:105px;height:105px;
+            top:17px;left:17px;
+            opacity:.5;
+            mix-blend-mode:screen;
+            animation:sunGlow 8s ease-in-out infinite;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(150, 220, 255, 0.8) 0%, transparent 70%);
+          "></div>
+          <!-- Lens flare wrapper (animates opacity & scale) -->
+          <div style="
+            position: absolute;
+            width:88px;height:88px;
+            top:26px;left:26px;
+            opacity:.4;
+            mix-blend-mode:screen;
+            animation:flarePop 4s ease-in-out infinite;
+          ">
+             <!-- Inner flare (rotates and stretches) -->
+             <div style="width:100%; height:100%; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(100, 255, 200, 0.8) 0%, transparent 70%); transform: rotate(-45deg) scaleX(2.5) scaleY(0.2);"></div>
+          </div>
+      </div>
+    `
+      },
+      RAINY: {
+        cls: 'bg-rain',
+        html: `
+          <img src="04_minimalist_unsplash_tl8GM4dWXnM.webp" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;" />
+          <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(30, 45, 60, 0.4) 0%, rgba(20, 30, 40, 0.7) 100%); z-index: 1;"></div>
+          <canvas id="rainCanvas" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;"></canvas>
+        `
+      },
+      ALERT: {
+        cls: 'bg-alert',
+        html: ``
+      }
+    };
+
+
+    // --- HỆ THỐNG MƯA CANVAS 3D (ĐỘC QUYỀN THỢ DMX) ---
+    class RainSystem {
+      constructor(canvasId) {
+        this.cvs = document.getElementById(canvasId);
+        if (!this.cvs) return;
+        this.ctx = this.cvs.getContext('2d');
+
+        const dpr = window.devicePixelRatio || 1;
+        const rect = this.cvs.parentElement.getBoundingClientRect();
+        this.w = rect.width || 340;
+        this.h = rect.height || 180;
+
+        this.cvs.width = this.w * dpr;
+        this.cvs.height = this.h * dpr;
+        this.ctx.scale(dpr, dpr);
+
+        this.drops = [];
+        this.splashes = [];
+        this._raf = null;
+
+        for (let i = 0; i < 150; i++) {
+          this.drops.push(this._makeDrop(true));
+        }
+      }
+
+      _makeDrop(scatter = false) {
+        return {
+          x: Math.random() * (this.w + 40) - 20,
+          y: scatter ? Math.random() * this.h : -24,
+          len: Math.random() * 18 + 8,
+          speed: Math.random() * 5 + 4,
+          alpha: Math.random() * 0.45 + 0.15,
+          splashed: false
+        };
+      }
+
+      _makeSplash(x, y) {
+        return {
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 3 - 0.5, // slightly left bias due to wind
+          vy: -(Math.random() * 2 + 1.5),
+          alpha: 0.6,
+          life: 1.0,
+          decay: Math.random() * 0.05 + 0.03
+        };
+      }
+
+      _frame() {
+        this.ctx.clearRect(0, 0, this.w, this.h);
+
+        // Get button bounds relative to canvas
+        let btnBox = { x: -999, y: -999, w: 0, h: 0 };
+        const btn = document.getElementById('wxBtn');
+        if (btn) {
+          const btnR = btn.getBoundingClientRect();
+          const cvsR = this.cvs.getBoundingClientRect();
+          btnBox.x = btnR.left - cvsR.left;
+          btnBox.y = btnR.top - cvsR.top;
+          btnBox.w = btnR.width;
+          btnBox.h = btnR.height;
+        }
+
+        // Draw and update drops
+        for (const d of this.drops) {
+          this.ctx.strokeStyle = `rgba(180, 220, 255, ${d.alpha})`;
+          this.ctx.lineWidth = 1;
+
+          this.ctx.beginPath();
+          this.ctx.moveTo(d.x, d.y);
+          this.ctx.lineTo(d.x - 2.5, d.y + d.len);
+          this.ctx.stroke();
+
+          const nextY = d.y + d.speed;
+          const nextX = d.x - 1.8;
+
+          // Collision with button top surface
+          if (!d.splashed && nextY + d.len >= btnBox.y && d.y + d.len < btnBox.y + 20 && nextX >= btnBox.x && nextX <= btnBox.x + btnBox.w) {
+            // Splash!
+            for (let s = 0; s < Math.floor(Math.random() * 3 + 1); s++) {
+              this.splashes.push(this._makeSplash(nextX, btnBox.y));
+            }
+            // Mark as splashed but DON'T kill it! Let it fall behind the glass button.
+            d.splashed = true;
+          }
+
+          d.y = nextY;
+          d.x = nextX;
+
+          if (d.y > this.h + 24) {
+            Object.assign(d, this._makeDrop(false));
+          }
+        }
+
+        // Draw and update splashes
+        for (let i = this.splashes.length - 1; i >= 0; i--) {
+          const s = this.splashes[i];
+          this.ctx.fillStyle = `rgba(180, 220, 255, ${s.alpha * s.life})`;
+          this.ctx.fillRect(s.x, s.y, 1.5, 1.5);
+
+          s.x += s.vx;
+          s.y += s.vy;
+          s.vy += 0.2; // gravity
+          s.life -= s.decay;
+
+          if (s.life <= 0) {
+            this.splashes.splice(i, 1);
+          }
+        }
+
+        this._raf = requestAnimationFrame(() => this._frame());
+      }
+
+      start() {
+        if (!this._raf) this._frame();
+      }
+      stop() {
+        if (this._raf) cancelAnimationFrame(this._raf);
+        this._raf = null;
+      }
+    }
+    let activeRain = null;
+
+    function evaluateState() {
+      if (activeRain) { activeRain.stop(); activeRain = null; }
+
+      const weather = selWeather.value;
+      const device = selDevice.value;
+      let actionLog = "";
+
+      if (device === 'MISSING_DATA') {
+        actionLog = "❌ ẨN TÍNH NĂNG (Lý do: Thiếu Data)";
+        hideWeatherCard();
+        renderDevices([]);
+        logOutput.innerHTML = actionLog;
+        return;
+      }
+
+      if (device === 'NO_DEVICE') {
+        actionLog = "🟢 HIỂN THỊ (Lý do: Chưa có thiết bị -> Khuyến khích thêm)";
+        renderNoDeviceState();
+        logOutput.innerHTML = actionLog;
+        return;
+      }
+
+
+
+      showWeatherCard();
+      let devList = [];
+
+      actionLog = "🟡 HIỂN THỊ THEO THỜI TIẾT (Lý do: Thời tiết bất thường, Dù thiết bị bình thường)";
+      if (weather === 'HOT') {
+        setCardContent(
+          bgAssets.HOT, '39°C', 'Cập nhật lúc 10:30 hôm nay',
+          'Phát hiện thời tiết nóng tại khu vực của bạn, phù hợp vệ sinh máy lạnh để <strong>làm lạnh tốt hơn</strong> và <strong>tiết kiệm điện hơn</strong>!',
+          'Xem gợi ý từ Thợ DMX'
+        );
+      } else if (weather === 'RAINY') {
+        setCardContent(
+          bgAssets.RAINY, '27°C', 'Cập nhật lúc 10:30 hôm nay',
+          'Mưa lớn độ ẩm cao, lồng giặt dễ nấm mốc. Gợi ý <strong>vệ sinh lồng giặt</strong> bảo vệ sức khỏe gia đình!',
+          'Xem dịch vụ'
+        );
+        initRainSystem();
+      }
+      devList = [
+        { name: 'Máy lạnh Daikin', sub: 'Còn 4 tháng', badge: 'b-gray', lbl: 'Bình thường', ico: '❄️' }
+      ];
+
+      renderDevices(devList);
+      logOutput.innerHTML = actionLog;
+    }
+
+    function hideWeatherCard() {
+      wxContainer.style.display = 'none';
+    }
+
+    function showWeatherCard() {
+      wxContainer.style.display = 'block';
+      devContainer.innerHTML = '';
+    }
+
+    function initRainSystem() {
+      const checkAndInit = () => {
+        if (!document.getElementById('rainCanvas')) {
+          requestAnimationFrame(checkAndInit);
+          return;
+        }
+        activeRain = new RainSystem('rainCanvas');
+        activeRain.start();
+      };
+      requestAnimationFrame(checkAndInit);
+    }
+
+    function setCardContent(assetInfo, temp, sub, desc, btnText) {
+      const wxBg = document.getElementById('wxBg');
+      wxBg.className = 'wx-bg ' + assetInfo.cls;
+      wxBg.innerHTML = assetInfo.html;
+
+      wxTemp.innerHTML = temp;
+      wxSub.innerHTML = sub;
+      const sparkSvg = `
+    <div style="position:relative; display:inline-block; width:20px; height:20px; margin-right:8px; flex-shrink:0;">
+      <!-- Orbiting tiny stars -->
+      <span class="ai-star-mask" style="position:absolute; left:50%; top:50%; width:8px; height:8px; background:#fff; animation:ai-sparkle-pop-1 2s ease-in-out infinite 0s;"></span>
+      <span class="ai-star-mask" style="position:absolute; left:50%; top:50%; width:10px; height:10px; background:#e0f2fe; animation:ai-sparkle-pop-2 2.4s ease-in-out infinite 0.8s;"></span>
+      <span class="ai-star-mask" style="position:absolute; left:50%; top:50%; width:6px; height:6px; background:#ffd700; animation:ai-sparkle-pop-3 2.8s ease-in-out infinite 1.6s;"></span>
+      
+      <!-- Main star -->
+      <span style="
+        display: block; width: 100%; height: 100%; position: relative;
+        animation: ai-sparkle-pulse 2.6s ease-in-out infinite;
+      ">
+        <span class="ai-star-mask" style="
+          position: absolute; inset: 0; overflow: hidden;
+        ">
+          <!-- Spinning conic gradient colors -->
+          <span style="
+            position: absolute; left: -50%; top: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, #ff5a36 0deg, #e0f2fe 90deg, #007aff 180deg, #ffd700 270deg, #ff5a36 360deg);
+            animation: ai-sparkle-spin 3s linear infinite;
+          "></span>
+        </span>
+        <!-- Inner white glow -->
+        <span style="
+          position: absolute; inset: 0;
+          background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 50%);
+          mix-blend-mode: screen;
+        "></span>
+      </span>
+    </div>
+  `;
+      wxBtn.innerHTML = sparkSvg + '<span>' + btnText + '</span>';
+    }
+
+    function renderNoDeviceState() {
+      hideWeatherCard();
+      devContainer.innerHTML = `
+    <div class="empty-state">
+      <div class="empty-ico">📦</div>
+      <div class="empty-title">Bạn chưa có thiết bị nào</div>
+      <div class="empty-desc">Thêm thiết bị (Máy lạnh, Máy giặt...) để Thợ DMX tự động nhắc lịch bảo dưỡng theo chu kỳ và thời tiết nhé!</div>
+      <button class="btn-primary">+ Thêm thiết bị của tôi</button>
+    </div>
+  `;
+    }
+
+    function renderDevices(list) {
+      if (list.length === 0) {
+        if (selDevice.value !== 'NO_DEVICE') devContainer.innerHTML = '';
+        return;
+      }
+      let html = '<div style="font-size:14px;font-weight:700;color:#333;margin-bottom:4px;">🔧 Thiết bị của bạn</div>';
+      list.forEach(d => {
+        html += `
+      <div class="dev-card">
+        <div class="d-ico">${d.ico}</div>
+        <div class="d-info">
+          <div class="d-name">${d.name}</div>
+          <div class="d-sub">${d.sub}</div>
+        </div>
+        <div class="badge ${d.badge}">${d.lbl}</div>
+      </div>
+    `;
+      });
+      devContainer.innerHTML = html;
+    }
+
+    selWeather.addEventListener('change', evaluateState);
+    selDevice.addEventListener('change', evaluateState);
+    evaluateState();
+  </script>
+</body>
+
+</html>
