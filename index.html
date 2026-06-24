@@ -754,7 +754,7 @@
     }
 
     .reminder-list-content {
-      max-height: 178px;
+      max-height: 200px;
       overflow-y: auto;
       padding: 0 14px;
       scrollbar-width: none;
@@ -1206,7 +1206,7 @@
 
     /* Injected Mobile Tweaks (Global for Phone Emulator) */
     .reminder-list-content {
-      max-height: 178px !important;
+      max-height: 200px !important;
     }
 
     .reminder-item {
@@ -1470,18 +1470,26 @@ Tiện ích</div></div>
         <!-- List -->
         <div class="reminder-list">
           <div class="reminder-list-content" id="reminderListContent">
-            <!-- Item 1: Washing machine -->
+            <!-- Item 1: Service Package -->
             <div class="reminder-item" style="cursor: pointer;">
-              <div class="item-image">
-                <img src="ThoDMX_Weather_Card_Demo_Package/productimg/gree-gwc09pb-k3d0p4-550x160.jpg"
-                  style="width:100%; height:100%; object-fit:contain; border-radius:inherit;" />
+              <div class="item-content" style="grid-column: 1 / 3;">
+                <p class="item-title" style="margin-bottom: 8px; line-height: 1.4;">Gói dịch vụ bảo dưỡng trọn đời Máy lọc nước Karofi năm 1</p>
+                <div style="display: flex; flex-direction: column; gap: 4px; font-size: 13px;">
+                  <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">Hiệu lực:</span>
+                    <span style="font-weight: 500; color: #374151;">09/03/2026 - 09/04/2027</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">Số lần đã sử dụng:</span>
+                    <span style="font-weight: 500; color: #27ae60;">0/1</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">Trạng thái:</span>
+                    <span style="font-weight: 500; color: #27ae60;">Còn hiệu lực</span>
+                  </div>
+                </div>
               </div>
-              <div class="item-content">
-                <p class="item-title">Máy lạnh Gree GWC09PB-K3D0P4</p>
-                <p class="item-meta">Có khuyến cáo vệ sinh vào ngày <span class="highlight">20/06/2026</span></p>
-              </div>
-              <div class="btn-group" style="grid-row: 2 / 3; grid-column: 2 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-  <button type="button" onclick="event.stopPropagation(); this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
+              <div class="btn-group" style="grid-row: 2 / 3; grid-column: 1 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
   <button class="ai-btn" type="button" onclick="event.stopPropagation(); window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
                 <div class="fancy-sparkle"
                   style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
@@ -1528,7 +1536,6 @@ Tiện ích</div></div>
                 <p class="item-meta">Có khuyến cáo vệ sinh vào ngày <span class="highlight">22/06/2026</span></p>
               </div>
               <div class="btn-group" style="grid-row: 2 / 3; grid-column: 2 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-  <button type="button" onclick="event.stopPropagation(); this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
   <button class="ai-btn" type="button" onclick="event.stopPropagation(); window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
                 <div class="fancy-sparkle"
                   style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
@@ -1575,7 +1582,6 @@ Tiện ích</div></div>
                 <p class="item-meta">Có khuyến cáo vệ sinh vào ngày <span class="highlight">25/06/2026</span></p>
               </div>
               <div class="btn-group" style="grid-row: 2 / 3; grid-column: 2 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-  <button type="button" onclick="event.stopPropagation(); this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
   <button class="ai-btn" type="button" onclick="event.stopPropagation(); window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
                 <div class="fancy-sparkle"
                   style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
@@ -1622,7 +1628,6 @@ Tiện ích</div></div>
                 <p class="item-meta"><span class="highlight">Khuyến cáo bảo dưỡng</span></p>
               </div>
               <div class="btn-group" style="grid-row: 2 / 3; grid-column: 2 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-  <button type="button" onclick="event.stopPropagation(); this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
   <button class="ai-btn" type="button" onclick="event.stopPropagation(); window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
                 <div class="fancy-sparkle"
                   style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
@@ -1669,7 +1674,6 @@ Tiện ích</div></div>
                 <p class="item-meta"><span class="highlight">Khuyến cáo bảo dưỡng</span></p>
               </div>
               <div class="btn-group" style="grid-row: 2 / 3; grid-column: 2 / 3; justify-self: end; display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-  <button type="button" onclick="event.stopPropagation(); this.closest('.reminder-item').style.display='none'" style="padding: 4px 12px; font-size: 13px; height: 28px; border-radius: 999px; border: 1px solid #d1d5db; background-color: white; color: #4b5563; font-weight: 500; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">Nhắc tôi sau</button>
   <button class="ai-btn" type="button" onclick="event.stopPropagation(); window.location.href='gio-hang.html'" style="margin-top: 0; grid-column: auto; grid-row: auto; justify-self: auto;">
                 <div class="fancy-sparkle"
                   style="display:inline-block; width:18px; height:18px; flex-shrink:0; animation: ai-sparkle-pulse 2.5s ease-in-out infinite;">
@@ -1785,7 +1789,20 @@ Tiện ích</div></div>
                   Phát hiện thời tiết nóng tại khu vực của bạn, phù hợp vệ sinh máy lạnh để <strong>làm lạnh tốt
                     hơn</strong> và <strong>tiết kiệm điện hơn</strong>!
                 </div>
-                <button id="wxBtn" class="wx-cta">Xem gợi ý từ Thợ DMX</button>
+                <button id="wxBtn" class="wx-cta">
+                  <div style="position:relative; display:inline-block; width:20px; height:20px; margin-right:8px; flex-shrink:0;">
+                    <span class="ai-star-mask" style="position:absolute; left:50%; top:50%; width:8px; height:8px; background:#fff; animation:ai-sparkle-pop-1 2s ease-in-out infinite 0s;"></span>
+                    <span class="ai-star-mask" style="position:absolute; left:50%; top:50%; width:10px; height:10px; background:#e0f2fe; animation:ai-sparkle-pop-2 2.4s ease-in-out infinite 0.8s;"></span>
+                    <span class="ai-star-mask" style="position:absolute; left:50%; top:50%; width:6px; height:6px; background:#ffd700; animation:ai-sparkle-pop-3 2.8s ease-in-out infinite 1.6s;"></span>
+                    <span style="display: block; width: 100%; height: 100%; position: relative; animation: ai-sparkle-pulse 2.6s ease-in-out infinite;">
+                      <span class="ai-star-mask" style="position: absolute; inset: 0; overflow: hidden;">
+                        <span style="position: absolute; left: -50%; top: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, #ff5a36 0deg, #e0f2fe 90deg, #007aff 180deg, #ffd700 270deg, #ff5a36 360deg); animation: ai-sparkle-spin 3s linear infinite;"></span>
+                      </span>
+                      <span style="position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 50%); mix-blend-mode: screen;"></span>
+                    </span>
+                  </div>
+                  <span>Xem gợi ý từ Thợ DMX</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1801,45 +1818,40 @@ Tiện ích</div></div>
 <div id="wxBottomSheetOverlay" class="wx-bottom-sheet-overlay"></div>
 <div id="wxBottomSheet" class="wx-bottom-sheet">
   <div class="wx-bs-header">
-    <h3 class="wx-bs-title">Đặt lịch bảo dưỡng thiết bị</h3>
+    <h3 class="wx-bs-title">Gợi ý dịch vụ bảo dưỡng</h3>
     <button class="wx-bs-close" id="wxBsClose">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M13 1L1 13M1 1L13 13" stroke="#4A5B78" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
   </div>
-  <div class="wx-bs-content">
-    <!-- Item 1: Overdue -->
-    <div class="wx-bs-item selected" onclick="document.querySelectorAll('.wx-bs-item').forEach(i => i.classList.remove('selected')); this.classList.add('selected');">
-      <img src="ThoDMX_Weather_Card_Demo_Package/productimg/gree-gwc09pb-k3d0p4-550x160.jpg" class="wx-bs-item-img" alt="Máy lạnh" />
-      <div class="wx-bs-item-info">
-        <p class="wx-bs-item-name">Máy lạnh Gree GWC09PB-K3D0P4</p>
-        <p class="wx-bs-item-status">Có khuyến cáo vệ sinh vào ngày 20/04/2026</p>
-      </div>
-      <div class="wx-bs-radio"></div>
+  <div class="wx-bs-content" style="padding: 16px; padding-bottom: 32px;">
+    <div class="grid grid-cols-3 gap-3">
+      <a href="gio-hang.html" class="block">
+        <div class="flex flex-col items-center justify-start gap-3 p-3 bg-white border border-[#e2e8f0] rounded-xl shadow-sm cursor-pointer hover:bg-[#f8fafc] transition-colors h-full">
+          <div class="relative shrink-0" style="height: 48px; width: 48px;">
+            <img src="https://img.tgdd.vn/imgt/ecom/f_webp%2Cfit_outside%2Cquality_95/https://cdnv2.tgdd.vn/pim/cdn/images/202512/vsml%20pro231905.png" alt="Vệ sinh máy lạnh" class="object-contain w-full h-full">
+          </div>
+          <p class="text-center text-[13px] leading-[1.3] font-medium text-[#1e293b]">Vệ sinh máy lạnh</p>
+        </div>
+      </a>
+      <a href="gio-hang.html" class="block">
+        <div class="flex flex-col items-center justify-start gap-3 p-3 bg-white border border-[#e2e8f0] rounded-xl shadow-sm cursor-pointer hover:bg-[#f8fafc] transition-colors h-full">
+          <div class="relative shrink-0" style="height: 48px; width: 48px;">
+            <img src="https://img.tgdd.vn/imgt/ecom/f_webp%2Cfit_outside%2Cquality_95/https://cdnv2.tgdd.vn/pim/cdn/images/202512/vsml%20pro231905.png" alt="Vệ sinh hệ thống lạnh" class="object-contain w-full h-full">
+          </div>
+          <p class="text-center text-[13px] leading-[1.3] font-medium text-[#1e293b]">Vệ sinh hệ thống lạnh</p>
+        </div>
+      </a>
+      <a href="gio-hang.html" class="block">
+        <div class="flex flex-col items-center justify-start gap-3 p-3 bg-white border border-[#e2e8f0] rounded-xl shadow-sm cursor-pointer hover:bg-[#f8fafc] transition-colors h-full">
+          <div class="relative shrink-0" style="height: 48px; width: 48px;">
+            <img src="https://img.tgdd.vn/imgt/ecom/f_webp%2Cfit_outside%2Cquality_95/https://cdnv2.tgdd.vn/pim/cdn/images/202512/vsquatdieuhoa232916.png" alt="Vệ sinh máy làm mát" class="object-contain w-full h-full">
+          </div>
+          <p class="text-center text-[13px] leading-[1.3] font-medium text-[#1e293b]">Vệ sinh máy làm mát</p>
+        </div>
+      </a>
     </div>
-    <!-- Item 2: Soon -->
-    <div class="wx-bs-item" onclick="document.querySelectorAll('.wx-bs-item').forEach(i => i.classList.remove('selected')); this.classList.add('selected');">
-      <img src="ThoDMX_Weather_Card_Demo_Package/productimg/80705-min-600x600.jpg" class="wx-bs-item-img" alt="Máy lạnh" />
-      <div class="wx-bs-item-info">
-        <p class="wx-bs-item-name">Máy lạnh treo tường (Chưa rõ model)</p>
-        <p class="wx-bs-item-status warning">Có khuyến cáo vệ sinh vào ngày 29/06/2026</p>
-      </div>
-      <div class="wx-bs-radio"></div>
-    </div>
-    <!-- Item 3: Weather match, not due yet -->
-    <div class="wx-bs-item" onclick="document.querySelectorAll('.wx-bs-item').forEach(i => i.classList.remove('selected')); this.classList.add('selected');">
-      <img src="ThoDMX_Weather_Card_Demo_Package/productimg/panasonic-nr-ba190ppvn-300x300.jpg" class="wx-bs-item-img" alt="Tủ lạnh" />
-      <div class="wx-bs-item-info">
-        <p class="wx-bs-item-name">Tủ lạnh Samsung Inverter 280 lít</p>
-        <p class="wx-bs-item-status normal">Có khuyến cáo vệ sinh vào ngày 20/08/2026</p>
-      </div>
-      <div class="wx-bs-radio"></div>
-    </div>
-  </div>
-  <div class="wx-bs-actions">
-    <button class="wx-bs-btn wx-bs-btn-secondary" id="wxBsLater">Nhắc tôi sau</button>
-    <button class="wx-bs-btn wx-bs-btn-primary" onclick="window.location.href='gio-hang.html'">Đặt lịch ngay</button>
   </div>
 </div>
 
