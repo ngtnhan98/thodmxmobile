@@ -1471,7 +1471,7 @@ Tiện ích</div></div>
         <div class="reminder-list">
           <div class="reminder-list-content" id="reminderListContent">
             <!-- Item 1: Service Package -->
-            <div class="reminder-item" style="cursor: pointer;">
+            <div class="reminder-item" style="cursor: pointer;" onclick="openPackageDetailPopup(this)">
               <div class="item-content" style="grid-column: 1 / 3;">
                 <p class="item-title" style="margin-bottom: 8px; line-height: 1.4;">Gói dịch vụ bảo dưỡng trọn đời Máy lọc nước Karofi năm 1</p>
                 <div style="display: flex; flex-direction: column; gap: 4px; font-size: 13px;">
@@ -1945,11 +1945,128 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
+
+  <style>
+    .antigravity-scroll-lock { overflow: hidden; }
+  </style>
+  <!-- Package Detail Popup -->
+    <div id="package-detail-sheet" class="pointer-events-none fixed z-[99] inset-0">
+      <div id="package-detail-overlay" class="absolute inset-0 bg-[#00000080] opacity-0 transition-opacity duration-300" onclick="closePackageDetailPopup()"></div>
+      <div class="md:max-w-screen-md relative m-auto max-w-[640px] h-full flex flex-col justify-end">
+        <section id="package-detail-content" class="relative block w-full transform rounded-t-xl bg-white shadow-xl translate-y-full transition-transform duration-300 max-h-[90vh] flex flex-col">
+          <div class="parent-action-sheet relative flex-1 min-h-0">
+            <div class="absolute -top-2 left-[45%] z-[200] h-[5px] w-12 rounded-lg bg-[#E1E1E1]"></div>
+            <button onclick="closePackageDetailPopup()" class="absolute right-[6px] top-[6px] z-[1001] hover:opacity-90">
+              <span class="flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-white text-16 font-bold text-black mx-4 mt-5">✕</span>
+            </button>
+            <div class="rounded-t-xl h-full flex flex-col">
+              <div class="lg:p-6 p-4 flex flex-col h-full min-h-0">
+                <h3 class="text-left text-20 leading-[1.6] text-[#1F2933] font-semibold mb-4 shrink-0">
+                  Gói chăm sóc sản phẩm
+                </h3>
+                <div class="flex flex-col gap-6 overflow-y-auto scrollbar-hide lg:max-h-[60vh] pb-4">
+                  <div class="flex flex-col">
+                    <h4 class="text-16 font-semibold text-[#1F2933] mb-3">Kiểm tra định kỳ</h4>
+                    <div class="flex w-full gap-[3px] overflow-hidden">
+                      <div class="flex-1 px-1 md:px-3 py-1.5 text-12 lg:text-14 font-medium min-w-[40px] lg:min-w-[72px] text-center transition-colors bg-[#57AE5B] text-white rounded-tl-md rounded-bl-md rounded-tr-md rounded-br-md">
+                        Lần 1
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-center gap-6 mt-4">
+                      <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#57AE5B]"></span><span class="text-14 text-[#616E7C]">Đã thực hiện</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#2186EB]"></span><span class="text-14 text-[#616E7C]">Lần kế tiếp</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex flex-col">
+                    <h4 class="text-14 lg:text-16 font-semibold text-[#1F2933] mb-3">Sản phẩm áp dụng</h4>
+                    <div class="w-full lg:h-[84px] h-[66px] flex items-start gap-3 lg:gap-4">
+                      <div class="w-[64px] lg:w-[80px] h-[64px] lg:h-[80px] shrink-0 border border-[#E4E7EB] rounded p-2 flex items-center justify-center overflow-hidden">
+                        <div class="relative shrink-0" style="height: 64px; width: 64px">
+                          <img src="https://cdn.tgdd.vn/Products/Images/2002/303871/may-lanh-panasonic-inverter-1-hp-cu-cs-pu9zkh-8-1-550x160.jpg" alt="product" loading="lazy" decoding="async" class="object-contain transition-opacity duration-300 opacity-100" style="width: 64px; height: 64px" />
+                        </div>
+                      </div>
+                      <div class="flex flex-col lg:gap-1 gap-0.5 w-full">
+                        <p class="text-14 font-semibold text-[#3E4C59] leading-[1.4] line-clamp-2">Máy lạnh Panasonic CU/CS-PU9ZKH-8M</p>
+                        <p class="text-12 lg:text-14 text-[#616E7C] mt-1 font-medium">Thương hiệu: <span class="text-[#1F2933]">Chưa xác định</span></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex flex-col">
+                    <h4 class="text-16 font-semibold text-[#1F2933] mb-3">Lịch sử đặt gói chăm sóc sản phẩm</h4>
+                    <div class="flex flex-col gap-3 min-h-[100px]">
+                      <div class="bg-[#F5F7FA] rounded-lg px-3 py-2 flex flex-col gap-3 cursor-pointer hover:shadow-md transition-shadow duration-200">
+                        <h5 id="popup-package-title" class="text-14 lg:text-16 font-medium text-[#1F2933]">
+                          Tặng 2 lần Vệ sinh máy lạnh (trong vòng 1 năm kể từ ngày mua hàng)
+                        </h5>
+                        <div class="flex flex-col gap-2 mt-1">
+                          <div class="flex justify-between items-start gap-4">
+                            <span class="text-12 lg:text-14 text-[#616E7C] shrink-0 font-normal">Mã đơn hàng:</span><span class="text-12 lg:text-14 text-[#1F2933] font-medium text-right break-all">00006SO24020278291</span>
+                          </div>
+                          <div class="flex justify-between items-start gap-4">
+                            <span class="text-12 lg:text-14 text-[#616E7C] shrink-0 font-normal">Thời gian đặt:</span><span class="text-12 lg:text-14 text-[#1F2933] text-right">08:58, 21/02/2024</span>
+                          </div>
+                          <div class="flex justify-between items-start gap-4">
+                            <span class="text-12 lg:text-14 text-[#616E7C] shrink-0 font-normal">Thời gian hoàn tất:</span><span class="text-12 lg:text-14 text-[#1F2933] text-right">02/03/2024</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="h-[calc(var(--safe-area-inset-bottom))] bg-white"></div>
+        </section>
+      </div>
+    </div>
+  <script>
+    function toggleSheet(sheetId, show) {
+      const sheet = document.getElementById(sheetId);
+      const overlay = sheet.querySelector('.bg-\\[\\#00000080\\]');
+      const content = sheet.querySelector('section');
+      
+      if (show) {
+        sheet.classList.remove('pointer-events-none');
+        void sheet.offsetWidth; // Reflow
+        overlay.classList.remove('opacity-0');
+        overlay.classList.add('opacity-100');
+        content.classList.remove('translate-y-full');
+        content.classList.add('translate-y-0');
+        document.body.classList.add('antigravity-scroll-lock');
+      } else {
+        overlay.classList.remove('opacity-100');
+        overlay.classList.add('opacity-0');
+        content.classList.remove('translate-y-0');
+        content.classList.add('translate-y-full');
+        document.body.classList.remove('antigravity-scroll-lock');
+        setTimeout(() => {
+          sheet.classList.add('pointer-events-none');
+        }, 300);
+      }
+    }
+
+    function openPackageDetailPopup(element) {
+      const title = element.querySelector('.item-title').innerText;
+      document.getElementById('popup-package-title').innerText = title;
+      toggleSheet('package-detail-sheet', true);
+    }
+
+    function closePackageDetailPopup() {
+      toggleSheet('package-detail-sheet', false);
+    }
+  </script>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.reminder-item').forEach(item => {
       item.addEventListener('click', function(e) {
         if (e.target.closest('.btn-group')) return;
+        if (item.hasAttribute('onclick')) return; // Ignore if it has a custom onclick
         window.location.href = 'chi-tiet-thiet-bi.html';
       });
     });
